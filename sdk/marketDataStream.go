@@ -1,7 +1,6 @@
 package sdk
 
 import (
-	"fmt"
 	t "tinkoff-invest-bot/Tinkoff/investapi"
 	"tinkoff-invest-bot/connect"
 	"tinkoff-invest-bot/loggy"
@@ -20,7 +19,6 @@ type MarketDataStream struct {
 }
 
 func NewMarketDataStream() *MarketDataStream {
-	fmt.Println("blya")
 	conn, err := connect.Connection()
 	if err != nil {
 		loggy.GetLogger().Sugar().Fatal(err.Error())
