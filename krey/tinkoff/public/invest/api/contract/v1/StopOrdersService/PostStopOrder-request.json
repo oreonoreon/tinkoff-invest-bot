@@ -1,0 +1,17 @@
+{
+  "figi": "fooBar",
+  "quantity": "123",
+  "price": {
+    "units": "123",
+    "nano": 123
+  },
+  "stopPrice": {
+    "units": "123",
+    "nano": 123
+  },
+  "direction": "STOP_ORDER_DIRECTION_UNSPECIFIED",
+  "accountId": "fooBar",
+  "expirationType": "STOP_ORDER_EXPIRATION_TYPE_UNSPECIFIED",
+  "stopOrderType": "STOP_ORDER_TYPE_UNSPECIFIED",
+  "expireDate": "1970-01-01T00:02:03.000000123Z"
+}

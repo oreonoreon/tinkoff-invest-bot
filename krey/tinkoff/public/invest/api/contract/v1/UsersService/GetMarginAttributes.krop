@@ -1,0 +1,12 @@
+{
+  "details": {
+    "methodFqn": "tinkoff.public.invest.api.contract.v1.UsersService.GetMarginAttributes"
+  },
+  "requests": [
+    {
+      "location": "GetMarginAttributes-request.json"
+    }
+  ],
+  "operationType": "unary",
+  "invokerName": "grpc"
+}

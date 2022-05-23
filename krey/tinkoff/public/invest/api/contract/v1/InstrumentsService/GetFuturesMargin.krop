@@ -1,0 +1,12 @@
+{
+  "details": {
+    "methodFqn": "tinkoff.public.invest.api.contract.v1.InstrumentsService.GetFuturesMargin"
+  },
+  "requests": [
+    {
+      "location": "GetFuturesMargin-request.json"
+    }
+  ],
+  "operationType": "unary",
+  "invokerName": "grpc"
+}

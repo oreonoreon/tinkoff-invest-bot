@@ -1,0 +1,12 @@
+{
+  "details": {
+    "methodFqn": "tinkoff.public.invest.api.contract.v1.InstrumentsService.GetAssetBy"
+  },
+  "requests": [
+    {
+      "location": "GetAssetBy-request.json"
+    }
+  ],
+  "operationType": "unary",
+  "invokerName": "grpc"
+}

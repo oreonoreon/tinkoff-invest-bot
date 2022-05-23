@@ -1,0 +1,12 @@
+{
+  "details": {
+    "methodFqn": "tinkoff.public.invest.api.contract.v1.StopOrdersService.CancelStopOrder"
+  },
+  "requests": [
+    {
+      "location": "CancelStopOrder-request.json"
+    }
+  ],
+  "operationType": "unary",
+  "invokerName": "grpc"
+}

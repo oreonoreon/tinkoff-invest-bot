@@ -1,0 +1,12 @@
+{
+  "details": {
+    "methodFqn": "tinkoff.public.invest.api.contract.v1.UsersService.GetAccounts"
+  },
+  "requests": [
+    {
+      "location": "GetAccounts-request.json"
+    }
+  ],
+  "operationType": "unary",
+  "invokerName": "grpc"
+}

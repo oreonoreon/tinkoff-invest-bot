@@ -1,0 +1,12 @@
+{
+  "details": {
+    "methodFqn": "tinkoff.public.invest.api.contract.v1.SandboxService.CancelSandboxOrder"
+  },
+  "requests": [
+    {
+      "location": "CancelSandboxOrder-request.json"
+    }
+  ],
+  "operationType": "unary",
+  "invokerName": "grpc"
+}

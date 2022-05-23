@@ -1,0 +1,11 @@
+{
+  "instruments": [
+    {
+      "figi": "fooBar"
+    },
+    {
+      "figi": "fooBar"
+    }
+  ],
+  "actionType": "EDIT_FAVORITES_ACTION_TYPE_UNSPECIFIED"
+}

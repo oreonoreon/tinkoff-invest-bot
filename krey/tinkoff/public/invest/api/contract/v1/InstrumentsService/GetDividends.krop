@@ -1,0 +1,12 @@
+{
+  "details": {
+    "methodFqn": "tinkoff.public.invest.api.contract.v1.InstrumentsService.GetDividends"
+  },
+  "requests": [
+    {
+      "location": "GetDividends-request.json"
+    }
+  ],
+  "operationType": "unary",
+  "invokerName": "grpc"
+}

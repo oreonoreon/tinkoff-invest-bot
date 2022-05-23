@@ -1,0 +1,12 @@
+{
+  "details": {
+    "methodFqn": "tinkoff.public.invest.api.contract.v1.OperationsService.GetBrokerReport"
+  },
+  "requests": [
+    {
+      "location": "GetBrokerReport-request.json"
+    }
+  ],
+  "operationType": "unary",
+  "invokerName": "grpc"
+}

@@ -1,0 +1,12 @@
+{
+  "details": {
+    "methodFqn": "tinkoff.public.invest.api.contract.v1.SandboxService.CloseSandboxAccount"
+  },
+  "requests": [
+    {
+      "location": "CloseSandboxAccount-request.json"
+    }
+  ],
+  "operationType": "unary",
+  "invokerName": "grpc"
+}
