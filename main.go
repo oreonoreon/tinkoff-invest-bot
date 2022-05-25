@@ -3,9 +3,9 @@ package main
 import (
 	"fmt"
 	"google.golang.org/protobuf/types/known/timestamppb"
-	"log"
 	"time"
 	t "tinkoff-invest-bot/Tinkoff/investapi"
+	"tinkoff-invest-bot/ema"
 	"tinkoff-invest-bot/sdk"
 )
 
@@ -14,22 +14,24 @@ type TimeToStamp struct {
 	to   *timestamppb.Timestamp
 }
 
-func (s TimeToStamp) ConvertTime() *TimeToStamp {
-	oneTrainingPeriod := time.Now().Add(-24 * time.Hour)
-	s.from = timestamppb.New(oneTrainingPeriod)
-	s.to = timestamppb.Now()
+func (s TimeToStamp) ConvertTime(days time.Duration) *TimeToStamp {
+	x := -24 * days
+	oneTrainingPeriod := time.Now().Add(x * time.Hour)
+	s.from = timestamppb.New(oneTrainingPeriod.Add(-24 * time.Hour))
+	s.to = timestamppb.New(oneTrainingPeriod)
 	return &s
 }
 func NewTimetoStamp() *TimeToStamp {
 	return new(TimeToStamp)
 }
 func main() {
-	s := NewTimetoStamp()
-	historicalCandles, err := sdk.NewMarketDataService().GetCandles("BBG006L8G4H1", s.ConvertTime().from, s.ConvertTime().to, t.CandleInterval_CANDLE_INTERVAL_5_MIN)
-	if err != nil {
-		log.Println(err)
-	}
-	fmt.Println(historicalCandles)
+	/*
+		hc := hiscandle(7)
+		for _, value := range hc {
+			fmt.Println(value.Time.AsTime())
+		}
+	*/
+	ema.EMA(hiscandle(7), 50)
 
 	mds := sdk.NewMarketDataStream()
 	mds.Send(&t.MarketDataRequest{

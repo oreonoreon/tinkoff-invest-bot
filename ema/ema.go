@@ -7,16 +7,16 @@ import (
 	"tinkoff-invest-bot/convertQuotation"
 )
 
-var ema float64 = 1703 // 1695.8
+var ema float64 = 1642.3 // 1695.8
 var price float64
 var readytoshort bool
 var accountBalance float64 = 10000
 var sold bool
 
-func EMA(data *investapi.GetCandlesResponse, n float64) {
+func EMA(data []*investapi.HistoricCandle, n float64) {
 
 	a := 2 / (n + 1)
-	for _, value := range data.Candles {
+	for _, value := range data {
 		price = convertQuotation.Convert(value.Close.Units, value.Close.Nano) //цена закрытия
 		//fmt.Println(value.Time.AsTime())
 		ema = a*price + (1-a)*ema
