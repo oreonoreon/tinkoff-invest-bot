@@ -37,6 +37,7 @@ func StrategyShort(time time.Time, ema float64, price float64) {
 }
 
 func sellinstr() {
+
 	saccount, err := Sk.SandboxService.GetSandboxAccounts()
 	if err != nil {
 		log.Fatalln("GetSandboxAccounts", err)
@@ -50,13 +51,15 @@ func sellinstr() {
 		OrderId:   uuid.New().String(),
 	})
 	if err != nil {
-		loggy.GetLogger().Sugar().Warn("postorerResp ", err)
+		loggy.GetLogger().Sugar().Warn("postorderResp ", err)
 	}
 	fmt.Println(postorderResp)
 	//accountBalance += price
 	sold = true
+
 }
 func buyinstr() {
+
 	saccount, err := Sk.SandboxService.GetSandboxAccounts()
 	if err != nil {
 		log.Fatalf("GetSandboxAccounts", err)
@@ -70,10 +73,11 @@ func buyinstr() {
 		OrderId:   uuid.New().String(),
 	})
 	if err != nil {
-		loggy.GetLogger().Sugar().Warn("postorerResp ", err)
+		loggy.GetLogger().Sugar().Warn("postorderResp ", err)
 	}
 	fmt.Println(postorderResp)
 	fmt.Println(Sk.SandboxService.GetSandboxOrders(saccount[0].Id))
 	//accountBalance -= price
 	sold = false
+
 }

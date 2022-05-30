@@ -1,7 +1,6 @@
 package sdk
 
 import (
-	"fmt"
 	"github.com/golang/protobuf/ptypes/timestamp"
 	"log"
 	t "tinkoff-invest-bot/Tinkoff/investapi"
@@ -58,7 +57,6 @@ type InstrumentsService struct {
 }
 
 func NewInstrumentsService() *InstrumentsService {
-	fmt.Println("blya")
 	conn, err := connect.Connection()
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)

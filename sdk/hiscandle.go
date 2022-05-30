@@ -25,22 +25,16 @@ func NewTimetoStamp() *TimeToStamp {
 
 var hc []*t.HistoricCandle
 
-func (sk *Services) Hiscandle(n time.Duration) []*t.HistoricCandle {
+func (sk *Services) Hiscandle(numberOfperiud time.Duration, figi string, candleInterval t.CandleInterval) []*t.HistoricCandle {
 	s := NewTimetoStamp()
-	historicalCandles, err := sk.MarketDataService.GetCandles("BBG006L8G4H1", s.ConvertTime(n).from, s.ConvertTime(n).to, t.CandleInterval_CANDLE_INTERVAL_5_MIN)
+	historicalCandles, err := sk.MarketDataService.GetCandles(figi, s.ConvertTime(numberOfperiud).from, s.ConvertTime(numberOfperiud).to, candleInterval)
 	if err != nil {
 		log.Println(err)
 	}
-	/*
-		for _, value := range historicalCandles {
-			fmt.Println(value.Time.AsTime())
-		}
-	*/
-
 	hc = append(hc, historicalCandles...)
-	if n == 0 {
+	if numberOfperiud == 0 {
 		return hc
 	} else {
-		return sk.Hiscandle(n - 1)
+		return sk.Hiscandle(numberOfperiud-1, figi, candleInterval)
 	}
 }
