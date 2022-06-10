@@ -2,7 +2,6 @@ package sdk
 
 import (
 	t "tinkoff-invest-bot/Tinkoff/investapi"
-	"tinkoff-invest-bot/connect"
 	"tinkoff-invest-bot/loggy"
 	"tinkoff-invest-bot/metrics"
 )
@@ -23,7 +22,7 @@ type UsersService struct {
 }
 
 func NewUsersService() *UsersService {
-	conn, err := connect.Connection()
+	conn, err := Connection()
 	if err != nil {
 		loggy.GetLogger().Sugar().Fatal(err.Error())
 	}
@@ -33,7 +32,7 @@ func NewUsersService() *UsersService {
 }
 
 func (us UsersService) GetAccounts() ([]*t.Account, error) {
-	ctx, cancel := connect.NewContext()
+	ctx, cancel := NewContext()
 	defer cancel()
 	us.incrementRequestsCounter("GetAccounts")
 	res, err := us.client.GetAccounts(ctx, &t.GetAccountsRequest{})
@@ -46,7 +45,7 @@ func (us UsersService) GetAccounts() ([]*t.Account, error) {
 }
 
 func (us UsersService) GetMarginAttributes(accountID string) (*t.GetMarginAttributesResponse, error) {
-	ctx, cancel := connect.NewContext()
+	ctx, cancel := NewContext()
 	defer cancel()
 
 	us.incrementRequestsCounter("GetMarginAttributes")
@@ -62,7 +61,7 @@ func (us UsersService) GetMarginAttributes(accountID string) (*t.GetMarginAttrib
 }
 
 func (us UsersService) GetUserTariff() (*t.GetUserTariffResponse, error) {
-	ctx, cancel := connect.NewContext()
+	ctx, cancel := NewContext()
 	defer cancel()
 	us.incrementRequestsCounter("GetUserTariff")
 	res, err := us.client.GetUserTariff(ctx, &t.GetUserTariffRequest{})
@@ -75,7 +74,7 @@ func (us UsersService) GetUserTariff() (*t.GetUserTariffResponse, error) {
 }
 
 func (us UsersService) GetInfo() (*t.GetInfoResponse, error) {
-	ctx, cancel := connect.NewContext()
+	ctx, cancel := NewContext()
 	defer cancel()
 
 	us.incrementRequestsCounter("GetInfo")

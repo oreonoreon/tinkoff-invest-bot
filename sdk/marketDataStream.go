@@ -2,7 +2,6 @@ package sdk
 
 import (
 	t "tinkoff-invest-bot/Tinkoff/investapi"
-	"tinkoff-invest-bot/connect"
 	"tinkoff-invest-bot/loggy"
 )
 
@@ -19,13 +18,13 @@ type MarketDataStream struct {
 }
 
 func NewMarketDataStream() *MarketDataStream {
-	conn, err := connect.Connection()
+	conn, err := Connection()
 	if err != nil {
 		loggy.GetLogger().Sugar().Fatal(err.Error())
 	}
 
 	client := t.NewMarketDataStreamServiceClient(conn)
-	ctx := connect.NewContextStream()
+	ctx := NewContextStream()
 	//defer cancel()
 
 	stream, err := client.MarketDataStream(ctx)

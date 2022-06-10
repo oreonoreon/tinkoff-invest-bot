@@ -9,7 +9,6 @@ import (
 	"tinkoff-invest-bot/loggy"
 )
 
-//var accountBalance float64 = 10000
 var i int
 var readytoshort bool
 var sold bool
@@ -56,7 +55,6 @@ func sellinstr() {
 	fmt.Println(postorderResp)
 	//accountBalance += price
 	sold = true
-
 }
 func buyinstr() {
 
@@ -79,5 +77,4 @@ func buyinstr() {
 	fmt.Println(Sk.SandboxService.GetSandboxOrders(saccount[0].Id))
 	//accountBalance -= price
 	sold = false
-
 }

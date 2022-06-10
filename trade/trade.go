@@ -6,21 +6,23 @@ import (
 	"os"
 	"time"
 	t "tinkoff-invest-bot/Tinkoff/investapi"
+	"tinkoff-invest-bot/View"
 	"tinkoff-invest-bot/ema"
 	"tinkoff-invest-bot/sdk"
 )
 
-var Sk *sdk.Services
+var Sk *sdk.Services // TODO РЕШИТЬ ЧТО ТО С ОБЬЯВЛЕНИЕМ SK, ТАК ОСТАВЛЯТЬ ОПАСНО И НЕПРАВЕЛЬНО!
 
 func Run() {
 	//log := loggy.GetLogger().Sugar()
 	Sk = sdk.NewServices()
+	var figi = "BBG000B9XRY4"
 	EMA := ema.NewEma()
-	EMA.EMAHistoric(Sk.Hiscandle(30, "BBG006L8G4H1", t.CandleInterval_CANDLE_INTERVAL_5_MIN), 20)
+	EMA.EMAHistoric(Sk.Hiscandle(30, figi, t.CandleInterval_CANDLE_INTERVAL_5_MIN), 20)
 	sandBox()
 
 	mds := Sk.MarketDataServiceStream
-	err := mds.Send(marketDataStream_SubscribeCandles("BBG006L8G4H1", t.SubscriptionInterval_SUBSCRIPTION_INTERVAL_FIVE_MINUTES))
+	err := mds.Send(marketDataStream_SubscribeCandles(figi, t.SubscriptionInterval_SUBSCRIPTION_INTERVAL_FIVE_MINUTES))
 
 	if err != nil {
 		log.Fatal(err)
@@ -32,17 +34,18 @@ func Run() {
 			//panic(err)
 			log.Println("ошибка во время стрима", err)
 			time.Sleep(20 * time.Second)
-			//<-context.Context()
 		}
 
-		fmt.Println(recv)
+		View.ShowInfo(recv) //fmt.Println(recv)
 
 		EMA.EMAstream(recv.GetCandle(), 20)
-		StrategyShort(time.Now(), EMA.Getema(), ema.Getprice())
+		StrategyShort(time.Now(), EMA.Getema(), EMA.Getprice())
 	}
-	//restart()
+	//restart(Run)
 }
-func restart() {
+
+/*
+func restart(xfunc func()) {
 	var answer string
 	fmt.Println("Do you want to Restart program or Exit?\nType Restart or Exit")
 	fmt.Scanln(&answer)
@@ -50,11 +53,22 @@ func restart() {
 	case "Exit", "exit":
 		os.Exit(0)
 	case "Restart", "restart":
-		Run()
+		xfunc() //Run()
+	}
+
+}*/
+func restart() {
+	var answer string
+	fmt.Println("Do you want to Restart program or Exit?\nType Restart or Exit")
+	fmt.Scanln(&answer)
+	switch answer {
+	case "Exit", "exit":
+		os.Exit(0)
+	default:
+		View.ShowInfo("RESTART")
 	}
 
 }
-
 func sandBox() {
 	sadboxaccount, err := Sk.SandboxService.GetSandboxAccounts()
 	if err != nil {
@@ -75,8 +89,22 @@ func sandBox() {
 			log.Fatalln("SandboxPayIn ", err)
 		}
 	}
-	fmt.Println(sandboxPortfolio)
+	View.ShowInfo(sandboxPortfolio) //fmt.Println(sandboxPortfolio)
 	//fmt.Println(Sk.SandboxService.GetSandboxAccounts())
+}
+func AccSandBox() {
+	if Sk == nil {
+		Sk = sdk.NewServices()
+	}
+	account, err := Sk.SandboxService.GetSandboxAccounts()
+	if err != nil {
+		View.ShowInfo(err)
+	}
+	portfolio, err := Sk.SandboxService.GetSandboxPortfolio(account[0].Id)
+	if err != nil {
+		View.ShowInfo(err)
+	}
+	View.ShowInfo(portfolio)
 }
 
 func marketDataStream_SubscribeLastPrice(figi string) *t.MarketDataRequest {
@@ -101,7 +129,7 @@ func marketDataStream_SubscribeCandles(figi string, subscriptionInterval t.Subsc
 				SubscriptionAction: t.SubscriptionAction_SUBSCRIPTION_ACTION_SUBSCRIBE,
 				Instruments: []*t.CandleInstrument{
 					{
-						Figi:     figi,                 // "BBG006L8G4H1", // "BBG000B9XRY4", //"BBG006L8G4H1", "BBG000BDTBL9"
+						Figi:     figi,                 // "BBG006L8G4H1", // "BBG000B9XRY4", "BBG000BDTBL9"
 						Interval: subscriptionInterval, //t.SubscriptionInterval_SUBSCRIPTION_INTERVAL_FIVE_MINUTES,
 					},
 				},

@@ -3,7 +3,6 @@ package sdk
 import (
 	"github.com/golang/protobuf/ptypes/timestamp"
 	t "tinkoff-invest-bot/Tinkoff/investapi"
-	"tinkoff-invest-bot/connect"
 	"tinkoff-invest-bot/loggy"
 	"tinkoff-invest-bot/metrics"
 )
@@ -24,7 +23,7 @@ type OperationsService struct {
 }
 
 func NewOperationsService() *OperationsService {
-	conn, err := connect.Connection()
+	conn, err := Connection()
 	if err != nil {
 		loggy.GetLogger().Sugar().Fatal(err.Error())
 	}
@@ -34,7 +33,7 @@ func NewOperationsService() *OperationsService {
 }
 
 func (os OperationsService) GetOperations(accountID string, from, to *timestamp.Timestamp, state t.OperationState, figi string) ([]*t.Operation, error) {
-	ctx, cancel := connect.NewContext()
+	ctx, cancel := NewContext()
 	defer cancel()
 
 	os.incrementRequestsCounter("GetOperations")
@@ -54,7 +53,7 @@ func (os OperationsService) GetOperations(accountID string, from, to *timestamp.
 }
 
 func (os OperationsService) GetPortfolio(accountID string) (*t.PortfolioResponse, error) {
-	ctx, cancel := connect.NewContext()
+	ctx, cancel := NewContext()
 	defer cancel()
 
 	os.incrementRequestsCounter("GetPortfolio")
@@ -70,7 +69,7 @@ func (os OperationsService) GetPortfolio(accountID string) (*t.PortfolioResponse
 }
 
 func (os OperationsService) GetPositions(accountID string) (*t.PositionsResponse, error) {
-	ctx, cancel := connect.NewContext()
+	ctx, cancel := NewContext()
 	defer cancel()
 
 	os.incrementRequestsCounter("GetPositions")
@@ -86,7 +85,7 @@ func (os OperationsService) GetPositions(accountID string) (*t.PositionsResponse
 }
 
 func (os OperationsService) GetWithdrawLimits(accountID string) (*t.WithdrawLimitsResponse, error) {
-	ctx, cancel := connect.NewContext()
+	ctx, cancel := NewContext()
 	defer cancel()
 
 	os.incrementRequestsCounter("GetWithdrawLimits")

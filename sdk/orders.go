@@ -3,7 +3,6 @@ package sdk
 import (
 	"github.com/golang/protobuf/ptypes/timestamp"
 	t "tinkoff-invest-bot/Tinkoff/investapi"
-	"tinkoff-invest-bot/connect"
 	"tinkoff-invest-bot/loggy"
 	"tinkoff-invest-bot/metrics"
 )
@@ -24,7 +23,7 @@ type OrdersService struct {
 }
 
 func NewOrdersService() *OrdersService {
-	conn, err := connect.Connection()
+	conn, err := Connection()
 	if err != nil {
 		loggy.GetLogger().Sugar().Fatal(err.Error())
 	}
@@ -34,7 +33,7 @@ func NewOrdersService() *OrdersService {
 }
 
 func (os OrdersService) PostOrder(order *t.PostOrderRequest) (*t.PostOrderResponse, error) {
-	ctx, cancel := connect.NewContext()
+	ctx, cancel := NewContext()
 	defer cancel()
 
 	os.incrementRequestsCounter("PostOrder")
@@ -48,7 +47,7 @@ func (os OrdersService) PostOrder(order *t.PostOrderRequest) (*t.PostOrderRespon
 }
 
 func (os OrdersService) CancelOrder(accountID string, orderID string) (*timestamp.Timestamp, error) {
-	ctx, cancel := connect.NewContext()
+	ctx, cancel := NewContext()
 	defer cancel()
 
 	os.incrementRequestsCounter("CancelOrder")
@@ -65,7 +64,7 @@ func (os OrdersService) CancelOrder(accountID string, orderID string) (*timestam
 }
 
 func (os OrdersService) GetOrderState(accountID string, orderID string) (*t.OrderState, error) {
-	ctx, cancel := connect.NewContext()
+	ctx, cancel := NewContext()
 	defer cancel()
 
 	os.incrementRequestsCounter("GetOrderState")
@@ -82,7 +81,7 @@ func (os OrdersService) GetOrderState(accountID string, orderID string) (*t.Orde
 }
 
 func (os OrdersService) GetOrders(accountID string) ([]*t.OrderState, error) {
-	ctx, cancel := connect.NewContext()
+	ctx, cancel := NewContext()
 	defer cancel()
 
 	os.incrementRequestsCounter("GetOrders")

@@ -1,4 +1,4 @@
-package connect
+package sdk
 
 import (
 	"context"
@@ -14,7 +14,7 @@ import (
 )
 
 func Connection() (*grpc.ClientConn, error) {
-	os.Setenv("TINK_TOKEN", config.Token)
+	os.Setenv("TINK_TOKEN", "t.yIDgyFK0WY0lmEQ76djHQRjNONyVBsB34gqdTmZrfdKTdhH0sz1nH9momdp1mCWn-mk7xLaQRym-xJXHDLTZYw")
 
 	conn, err := grpc.Dial("invest-public-api.tinkoff.ru:443",
 		grpc.WithTransportCredentials(credentials.NewTLS(&tls.Config{})),

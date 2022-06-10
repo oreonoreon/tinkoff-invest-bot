@@ -2,7 +2,6 @@ package sdk
 
 import (
 	t "tinkoff-invest-bot/Tinkoff/investapi"
-	"tinkoff-invest-bot/connect"
 	"tinkoff-invest-bot/loggy"
 )
 
@@ -17,13 +16,13 @@ type OrdersStream struct {
 }
 
 func NewOrdersStream(request *t.TradesStreamRequest) *OrdersStream {
-	conn, err := connect.Connection()
+	conn, err := Connection()
 	if err != nil {
 		loggy.GetLogger().Sugar().Fatal(err.Error())
 	}
 
 	client := t.NewOrdersStreamServiceClient(conn)
-	ctx, cancel := connect.NewContext()
+	ctx, cancel := NewContext()
 	defer cancel()
 
 	stream, err := client.TradesStream(ctx, request)

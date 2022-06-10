@@ -1,6 +1,5 @@
 package sdk
 
-// Service is a ready-to-use scope for all available non-stream services.
 type Services struct {
 	InstrumentsService      InstrumentsService
 	MarketDataService       MarketDataService

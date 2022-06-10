@@ -4,7 +4,6 @@ import (
 	"github.com/golang/protobuf/ptypes/timestamp"
 	"log"
 	t "tinkoff-invest-bot/Tinkoff/investapi"
-	"tinkoff-invest-bot/connect"
 	"tinkoff-invest-bot/loggy"
 	"tinkoff-invest-bot/metrics"
 )
@@ -57,7 +56,7 @@ type InstrumentsService struct {
 }
 
 func NewInstrumentsService() *InstrumentsService {
-	conn, err := connect.Connection()
+	conn, err := Connection()
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)
 	}
@@ -67,7 +66,7 @@ func NewInstrumentsService() *InstrumentsService {
 }
 
 func (i InstrumentsService) TradingSchedules(exchange string, from, to *timestamp.Timestamp) ([]*t.TradingSchedule, error) {
-	ctx, cancel := connect.NewContext()
+	ctx, cancel := NewContext()
 	defer cancel()
 
 	i.incrementRequestsCounter("TradingSchedules")
@@ -85,7 +84,7 @@ func (i InstrumentsService) TradingSchedules(exchange string, from, to *timestam
 }
 
 func (i InstrumentsService) BondBy(filters t.InstrumentRequest) (*t.Bond, error) {
-	ctx, cancel := connect.NewContext()
+	ctx, cancel := NewContext()
 	defer cancel()
 
 	i.incrementRequestsCounter("BondBy")
@@ -99,7 +98,7 @@ func (i InstrumentsService) BondBy(filters t.InstrumentRequest) (*t.Bond, error)
 }
 
 func (i InstrumentsService) Bonds(status t.InstrumentStatus) ([]*t.Bond, error) {
-	ctx, cancel := connect.NewContext()
+	ctx, cancel := NewContext()
 	defer cancel()
 
 	i.incrementRequestsCounter("Bonds")
@@ -115,7 +114,7 @@ func (i InstrumentsService) Bonds(status t.InstrumentStatus) ([]*t.Bond, error) 
 }
 
 func (i InstrumentsService) GetBondCoupons(figi string, from, to *timestamp.Timestamp) ([]*t.Coupon, error) {
-	ctx, cancel := connect.NewContext()
+	ctx, cancel := NewContext()
 	defer cancel()
 
 	i.incrementRequestsCounter("GetBoundCoupons")
@@ -133,7 +132,7 @@ func (i InstrumentsService) GetBondCoupons(figi string, from, to *timestamp.Time
 }
 
 func (i InstrumentsService) CurrencyBy(filters t.InstrumentRequest) (*t.Currency, error) {
-	ctx, cancel := connect.NewContext()
+	ctx, cancel := NewContext()
 	defer cancel()
 
 	i.incrementRequestsCounter("CurrencyBy")
@@ -147,7 +146,7 @@ func (i InstrumentsService) CurrencyBy(filters t.InstrumentRequest) (*t.Currency
 }
 
 func (i InstrumentsService) Currencies(status t.InstrumentStatus) ([]*t.Currency, error) {
-	ctx, cancel := connect.NewContext()
+	ctx, cancel := NewContext()
 	defer cancel()
 
 	i.incrementRequestsCounter("Currencies")
@@ -163,7 +162,7 @@ func (i InstrumentsService) Currencies(status t.InstrumentStatus) ([]*t.Currency
 }
 
 func (i InstrumentsService) EtfBy(filters t.InstrumentRequest) (*t.Etf, error) {
-	ctx, cancel := connect.NewContext()
+	ctx, cancel := NewContext()
 	defer cancel()
 
 	i.incrementRequestsCounter("EtfBy")
@@ -177,7 +176,7 @@ func (i InstrumentsService) EtfBy(filters t.InstrumentRequest) (*t.Etf, error) {
 }
 
 func (i InstrumentsService) Etfs(status t.InstrumentStatus) ([]*t.Etf, error) {
-	ctx, cancel := connect.NewContext()
+	ctx, cancel := NewContext()
 	defer cancel()
 
 	i.incrementRequestsCounter("Etfs")
@@ -193,7 +192,7 @@ func (i InstrumentsService) Etfs(status t.InstrumentStatus) ([]*t.Etf, error) {
 }
 
 func (i InstrumentsService) FutureBy(filters t.InstrumentRequest) (*t.Future, error) {
-	ctx, cancel := connect.NewContext()
+	ctx, cancel := NewContext()
 	defer cancel()
 
 	i.incrementRequestsCounter("FutureBy")
@@ -207,7 +206,7 @@ func (i InstrumentsService) FutureBy(filters t.InstrumentRequest) (*t.Future, er
 }
 
 func (i InstrumentsService) Futures(status t.InstrumentStatus) ([]*t.Future, error) {
-	ctx, cancel := connect.NewContext()
+	ctx, cancel := NewContext()
 	defer cancel()
 
 	i.incrementRequestsCounter("Futures")
@@ -223,7 +222,7 @@ func (i InstrumentsService) Futures(status t.InstrumentStatus) ([]*t.Future, err
 }
 
 func (i InstrumentsService) ShareBy(filters t.InstrumentRequest) (*t.Share, error) {
-	ctx, cancel := connect.NewContext()
+	ctx, cancel := NewContext()
 	defer cancel()
 
 	i.incrementRequestsCounter("ShareBy")
@@ -237,7 +236,7 @@ func (i InstrumentsService) ShareBy(filters t.InstrumentRequest) (*t.Share, erro
 }
 
 func (i InstrumentsService) Shares(status t.InstrumentStatus) ([]*t.Share, error) {
-	ctx, cancel := connect.NewContext()
+	ctx, cancel := NewContext()
 	defer cancel()
 
 	i.incrementRequestsCounter("Shares")
@@ -253,7 +252,7 @@ func (i InstrumentsService) Shares(status t.InstrumentStatus) ([]*t.Share, error
 }
 
 func (i InstrumentsService) GetAccruedInterests(figi string, from, to *timestamp.Timestamp) ([]*t.AccruedInterest, error) {
-	ctx, cancel := connect.NewContext()
+	ctx, cancel := NewContext()
 	defer cancel() //ctx, cancel :=createRequestContext() // defer cancel()
 
 	i.incrementRequestsCounter("GetAccruedInterests")
@@ -271,7 +270,7 @@ func (i InstrumentsService) GetAccruedInterests(figi string, from, to *timestamp
 }
 
 func (i InstrumentsService) GetFuturesMargin(figi string) (*t.GetFuturesMarginResponse, error) {
-	ctx, cancel := connect.NewContext()
+	ctx, cancel := NewContext()
 	defer cancel()
 
 	i.incrementRequestsCounter("GetFuturesMargin")
@@ -287,7 +286,7 @@ func (i InstrumentsService) GetFuturesMargin(figi string) (*t.GetFuturesMarginRe
 }
 
 func (i InstrumentsService) GetInstrumentBy(filters t.InstrumentRequest) (*t.Instrument, error) {
-	ctx, cancel := connect.NewContext()
+	ctx, cancel := NewContext()
 	defer cancel()
 
 	i.incrementRequestsCounter("GetInstrumentBy")
@@ -301,7 +300,7 @@ func (i InstrumentsService) GetInstrumentBy(filters t.InstrumentRequest) (*t.Ins
 }
 
 func (i InstrumentsService) GetDividends(figi string, from, to *timestamp.Timestamp) ([]*t.Dividend, error) {
-	ctx, cancel := connect.NewContext()
+	ctx, cancel := NewContext()
 	defer cancel()
 
 	i.incrementRequestsCounter("GetDividends")
@@ -319,7 +318,7 @@ func (i InstrumentsService) GetDividends(figi string, from, to *timestamp.Timest
 }
 
 func (i InstrumentsService) GetAssetBy(assetID string) (*t.AssetFull, error) {
-	ctx, cancel := connect.NewContext()
+	ctx, cancel := NewContext()
 	defer cancel()
 
 	i.incrementRequestsCounter("GetAssetBy")
@@ -335,7 +334,7 @@ func (i InstrumentsService) GetAssetBy(assetID string) (*t.AssetFull, error) {
 }
 
 func (i InstrumentsService) GetAssets() ([]*t.Asset, error) {
-	ctx, cancel := connect.NewContext()
+	ctx, cancel := NewContext()
 	defer cancel()
 
 	i.incrementRequestsCounter("GetAssets")
@@ -349,7 +348,7 @@ func (i InstrumentsService) GetAssets() ([]*t.Asset, error) {
 }
 
 func (i InstrumentsService) GetFavorites() ([]*t.FavoriteInstrument, error) {
-	ctx, cancel := connect.NewContext()
+	ctx, cancel := NewContext()
 	defer cancel()
 
 	i.incrementRequestsCounter("GetFavourites")
@@ -363,7 +362,7 @@ func (i InstrumentsService) GetFavorites() ([]*t.FavoriteInstrument, error) {
 }
 
 func (i InstrumentsService) EditFavorites(newFavourites *t.EditFavoritesRequest) ([]*t.FavoriteInstrument, error) {
-	ctx, cancel := connect.NewContext()
+	ctx, cancel := NewContext()
 	defer cancel()
 
 	i.incrementRequestsCounter("EditFavorites")

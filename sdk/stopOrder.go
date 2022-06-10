@@ -3,7 +3,6 @@ package sdk
 import (
 	"github.com/golang/protobuf/ptypes/timestamp"
 	t "tinkoff-invest-bot/Tinkoff/investapi"
-	"tinkoff-invest-bot/connect"
 	"tinkoff-invest-bot/loggy"
 	"tinkoff-invest-bot/metrics"
 )
@@ -22,7 +21,7 @@ type StopOrdersService struct {
 }
 
 func NewStopOrdersService() *StopOrdersService {
-	conn, err := connect.Connection()
+	conn, err := Connection()
 	if err != nil {
 		loggy.GetLogger().Sugar().Fatal(err.Error())
 	}
@@ -32,7 +31,7 @@ func NewStopOrdersService() *StopOrdersService {
 }
 
 func (sos StopOrdersService) PostStopOrder(stopOrder *t.PostStopOrderRequest) (string, error) {
-	ctx, cancel := connect.NewContext()
+	ctx, cancel := NewContext()
 	defer cancel()
 
 	sos.incrementRequestsCounter("PostStopOrder")
@@ -46,7 +45,7 @@ func (sos StopOrdersService) PostStopOrder(stopOrder *t.PostStopOrderRequest) (s
 }
 
 func (sos StopOrdersService) GetStopOrders(accountID string) ([]*t.StopOrder, error) {
-	ctx, cancel := connect.NewContext()
+	ctx, cancel := NewContext()
 	defer cancel()
 
 	sos.incrementRequestsCounter("GetStopOrders")
@@ -62,7 +61,7 @@ func (sos StopOrdersService) GetStopOrders(accountID string) ([]*t.StopOrder, er
 }
 
 func (sos StopOrdersService) CancelStopOrder(accountID string, stopOrderID string) (*timestamp.Timestamp, error) {
-	ctx, cancel := connect.NewContext()
+	ctx, cancel := NewContext()
 	defer cancel()
 
 	sos.incrementRequestsCounter("CancelStopOrder")

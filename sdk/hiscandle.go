@@ -24,6 +24,7 @@ func NewTimetoStamp() *TimeToStamp {
 }
 
 var hc []*t.HistoricCandle
+var lt []*t.Trade
 
 func (sk *Services) Hiscandle(numberOfperiud time.Duration, figi string, candleInterval t.CandleInterval) []*t.HistoricCandle {
 	s := NewTimetoStamp()
@@ -37,4 +38,19 @@ func (sk *Services) Hiscandle(numberOfperiud time.Duration, figi string, candleI
 	} else {
 		return sk.Hiscandle(numberOfperiud-1, figi, candleInterval)
 	}
+}
+
+func (sk *Services) HisLastTrade(numberOfperiud time.Duration, figi string) []*t.Trade {
+	s := NewTimetoStamp()
+	lastTrades, err := sk.MarketDataService.GetLastTrades(figi, s.ConvertTime(numberOfperiud).from, s.ConvertTime(numberOfperiud).to)
+	if err != nil {
+		log.Println(err)
+	}
+	lt = append(lt, lastTrades...)
+	if numberOfperiud == 0 {
+		return lt
+	} else {
+		return sk.HisLastTrade(numberOfperiud-1, figi)
+	}
+	return nil
 }

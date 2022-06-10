@@ -3,7 +3,6 @@ package sdk
 import (
 	"github.com/golang/protobuf/ptypes/timestamp"
 	t "tinkoff-invest-bot/Tinkoff/investapi"
-	"tinkoff-invest-bot/connect"
 	"tinkoff-invest-bot/loggy"
 	"tinkoff-invest-bot/metrics"
 )
@@ -26,7 +25,7 @@ type MarketDataService struct {
 }
 
 func NewMarketDataService() *MarketDataService {
-	conn, err := connect.Connection()
+	conn, err := Connection()
 	if err != nil {
 		loggy.GetLogger().Sugar().Fatal(err.Error())
 	}
@@ -36,7 +35,7 @@ func NewMarketDataService() *MarketDataService {
 }
 
 func (mds MarketDataService) GetCandles(figi string, from, to *timestamp.Timestamp, interval t.CandleInterval) ([]*t.HistoricCandle, error) {
-	ctx, cancel := connect.NewContext()
+	ctx, cancel := NewContext()
 	defer cancel()
 
 	mds.incrementRequestsCounter("GetCandles")
@@ -55,7 +54,7 @@ func (mds MarketDataService) GetCandles(figi string, from, to *timestamp.Timesta
 }
 
 func (mds MarketDataService) GetLastPrices(figi []string) ([]*t.LastPrice, error) {
-	ctx, cancel := connect.NewContext()
+	ctx, cancel := NewContext()
 	defer cancel()
 
 	mds.incrementRequestsCounter("GetLastPrices")
@@ -71,7 +70,7 @@ func (mds MarketDataService) GetLastPrices(figi []string) ([]*t.LastPrice, error
 }
 
 func (mds MarketDataService) GetOrderBook(figi string, depth int) (*t.GetOrderBookResponse, error) {
-	ctx, cancel := connect.NewContext()
+	ctx, cancel := NewContext()
 	defer cancel()
 
 	mds.incrementRequestsCounter("GetOrderBook")
@@ -88,7 +87,7 @@ func (mds MarketDataService) GetOrderBook(figi string, depth int) (*t.GetOrderBo
 }
 
 func (mds MarketDataService) GetTradingStatus(figi string) (*t.GetTradingStatusResponse, error) {
-	ctx, cancel := connect.NewContext()
+	ctx, cancel := NewContext()
 	defer cancel()
 
 	mds.incrementRequestsCounter("GetTradingStatus")
@@ -104,7 +103,7 @@ func (mds MarketDataService) GetTradingStatus(figi string) (*t.GetTradingStatusR
 }
 
 func (mds MarketDataService) GetLastTrades(figi string, from, to *timestamp.Timestamp) ([]*t.Trade, error) {
-	ctx, cancel := connect.NewContext()
+	ctx, cancel := NewContext()
 	defer cancel()
 
 	mds.incrementRequestsCounter("GetLastTrades")
