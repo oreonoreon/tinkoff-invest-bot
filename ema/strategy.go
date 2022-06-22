@@ -26,16 +26,24 @@ func History_testStrategyShort(SliceEma []Ema, Mapapa map[time.Time]EtfEma, sche
 		if key < 300 {
 			continue
 		}
-		//!value.time.Before(schedule.Days[0].StartTime.AsTime()) && !value.time.After(schedule.Days[0].EndTime.AsTime().Add(-20*time.Minute))
-		//всё клёво да вот в schedule.Days[0] забита дата, тобижь день месяц и всёэто начиная с сейчас и в будущее)))
-		h, _, _ := value.time.Clock()
+		// сделать проверку открытия рынка через формат проверки time записаного в Ema и установки marketgonaclose в true или false
+		checkTheMarketOpen(value, schedule, imMillionaire)
 
-		if (h >= 13) && (h <= 19) {
-			if Mapapa[value.time].ema > Mapapa[value.time].price {
-				imMillionaire.etfAbovePrice = true
-			}
-			shortornot(value, imMillionaire)
+		if Mapapa[value.time].ema > Mapapa[value.time].price {
+			imMillionaire.etfAbovePrice = true
 		}
+		shortornot(value, imMillionaire)
+
+		//-----------------------------------------------------------------------------------------------------------------
+		/*
+			h, _, _ := value.time.Clock()
+			if (h >= 13) && (h <= 19) {
+				if Mapapa[value.time].ema > Mapapa[value.time].price {
+					imMillionaire.etfAbovePrice = true
+				}
+				shortornot(value, imMillionaire)
+			}
+		*/
 	}
 	if len(test) != 0 {
 		fmt.Println("Account balance ", imMillionaire.accountBalance)
@@ -43,21 +51,68 @@ func History_testStrategyShort(SliceEma []Ema, Mapapa map[time.Time]EtfEma, sche
 	}
 }
 
+//checkTheMarketOpen возьмёт время из структуры Ema сравнит с schedule (расписанием открытий и закрытий рынка) и выдаст результат
+func checkTheMarketOpen(value Ema, schedule *t.TradingSchedule, imMillionaire *gonabeaMillionaire) {
+
+	year, mon, day := value.time.Date()
+	loc := value.time.Location()
+	if value.time.Before(time.Date(year, mon, day, 19, 45, 0, 0, loc)) && !value.time.Before(time.Date(year, mon, day, 13, 30, 0, 0, loc)) {
+		imMillionaire.marketgonaclose = false
+	} else {
+		imMillionaire.marketgonaclose = true
+	}
+
+	/*
+		if value.time.Hour() >= schedule.Days[0].StartTime.AsTime().Hour() && value.time.Hour() <= schedule.Days[0].EndTime.AsTime().Add(-20*time.Minute).Hour() {
+			imMillionaire.marketgonaclose = true
+		} else {
+			imMillionaire.marketgonaclose = false
+		}
+	*/
+	//!value.time.Before(schedule.Days[0].StartTime.AsTime()) && !value.time.After(schedule.Days[0].EndTime.AsTime().Add(-20*time.Minute))
+}
+
+//--------------------------------ЛОГИКА ШОРТ-СТРАТЕГИИ-----------------------------------------------
 func shortornot(value Ema, imMillionaire *gonabeaMillionaire) {
-	if value.price > value.ema && imMillionaire.readytoshort == false {
-		imMillionaire.readytoshort = true
-	}
-	if value.price < value.ema && imMillionaire.readytoshort && imMillionaire.etfAbovePrice {
-		sellinstr(value.price, imMillionaire)
-		imMillionaire.readytoshort = false
-		fmt.Println("sell")
-		fmt.Println("время сделки ", value.time) //время операции
-		fmt.Println("цена сделки", value.price)
-		fmt.Println("ema", value.ema) //ema на момент открытие сделки
-		imMillionaire.amountOfDeals++
-	}
-	h, m, _ := value.time.Clock()
-	if (value.price > value.ema && imMillionaire.sold) || (imMillionaire.sold && h == 19 && m == 45) {
+	if !imMillionaire.marketgonaclose {
+		if value.price > value.ema && imMillionaire.readytoshort == false {
+			imMillionaire.readytoshort = true
+		}
+		if value.price < value.ema && imMillionaire.readytoshort && imMillionaire.etfAbovePrice {
+			sellinstr(value.price, imMillionaire)
+			imMillionaire.readytoshort = false
+			fmt.Println("sell")
+			fmt.Println("время сделки ", value.time) //время операции
+			fmt.Println("цена сделки", value.price)
+			fmt.Println("ema", value.ema) //ema на момент открытие сделки
+			imMillionaire.amountOfDeals++
+		}
+		/*
+			year, mon, day := value.time.Date()
+			loc := value.time.Location()
+		*/
+		if value.price > value.ema && imMillionaire.sold { //|| (imMillionaire.sold && value.time.Equal(time.Date(year, mon, day, 19, 45, 0, 0, loc)))
+			buyinstr(value.price, imMillionaire)
+			fmt.Println("buyback")
+			fmt.Println("время сделки ", value.time) //время операции
+			fmt.Println("цена сделки", value.price)  //цена закрытия она же сделки
+			fmt.Println("ema", value.ema)            //ema на момент закрытия сделки
+			imMillionaire.readytoshort = true        //false
+			imMillionaire.amountOfDeals++
+		}
+		/*
+			h, m, _ := value.time.Clock()
+			if (value.price > value.ema && imMillionaire.sold) || (imMillionaire.sold && h == 19 && m == 45) { //todo исправить h==19 && m==45 будет пропускать время  болеше него если свечи меньши 15 минут
+				buyinstr(value.price, imMillionaire)
+				fmt.Println("buyback")
+				fmt.Println("время сделки ", value.time) //время операции
+				fmt.Println("цена сделки", value.price)  //цена закрытия она же сделки
+				fmt.Println("ema", value.ema)            //ema на момент закрытия сделки
+				imMillionaire.readytoshort = true        //false
+				imMillionaire.amountOfDeals++
+			}
+		*/
+	} else if imMillionaire.marketgonaclose && imMillionaire.sold {
 		buyinstr(value.price, imMillionaire)
 		fmt.Println("buyback")
 		fmt.Println("время сделки ", value.time) //время операции
@@ -66,6 +121,11 @@ func shortornot(value Ema, imMillionaire *gonabeaMillionaire) {
 		imMillionaire.readytoshort = true        //false
 		imMillionaire.amountOfDeals++
 	}
+
+}
+
+//----------------------------------------------------------------------------------------------------
+func longornot(value Ema, imMillionaire *gonabeaMillionaire) {
 
 }
 
