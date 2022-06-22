@@ -26,7 +26,7 @@ func History_testStrategyShort(SliceEma []Ema, Mapapa map[time.Time]EtfEma, sche
 		if key < 300 {
 			continue
 		}
-		// сделать проверку открытия рынка через формат проверки time записаного в Ema и установки marketgonaclose в true или false
+		//----------------проверка открытия рынка через формат проверки time записаного в Ema и установки marketgonaclose в true или false--------------
 		checkTheMarketOpen(value, schedule, imMillionaire)
 
 		if Mapapa[value.time].ema > Mapapa[value.time].price {
