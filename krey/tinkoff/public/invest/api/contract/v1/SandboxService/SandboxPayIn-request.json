@@ -1,8 +1,0 @@
-{
-  "accountId": "fooBar",
-  "amount": {
-    "currency": "{{ faker.finance.currency }}",
-    "units": "123",
-    "nano": 123
-  }
-}
