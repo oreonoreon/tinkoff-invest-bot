@@ -12,7 +12,7 @@ func main() {
 	//getHistoryData.Run("figi.txt")
 
 	ema.ReadWriteCSV("BBG000B9XRY4")
-
+	ema.NewTimeFrame(15)
 	//fmt.Println(ema.Candles)
 
 	xrr := bot.Bot()
