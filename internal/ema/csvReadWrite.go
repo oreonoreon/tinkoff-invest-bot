@@ -19,26 +19,14 @@ type Candle struct {
 	LowPrice   float64
 	VolumeLot  int64
 
-	Ema10_1min float64 `csv:",omitempty"`
-	//Ema10_5min  float64 `csv:"-"`
-	//Ema10_15min float64 `csv:"-"`
-	//Ema10_30min float64 `csv:"-"`
-	//Ema10_1h    float64 `csv:"-"`
-	//
-	//Ema20_1min  float64 `csv:"-"`
-	//Ema20_5min  float64 `csv:"-"`
-	//Ema20_15min float64 `csv:"-"`
-	//Ema20_30min float64 `csv:"-"`
-	//Ema20_1h    float64 `csv:"-"`
-	//
-	//Ema50_1min  float64 `csv:"-"`
-	//Ema50_5min  float64 `csv:"-"`
-	//Ema50_15min float64 `csv:"-"`
-	//Ema50_30min float64 `csv:"-"`
-	//Ema50_1h    float64 `csv:"-"`
+	EMAS CandleEma `csv:",omitempty"`
 }
-
-//`csv:",omitempty"`
+type CandleEma struct {
+	Ema_10 float64
+	Ema_20 float64
+	Ema_50 float64
+	//Time   time.Time
+}
 
 var Candles []Candle
 
@@ -48,20 +36,21 @@ func ReadWriteCSV(figi string) {
 		log.Fatalf("Error when opening file: %s", err)
 	}
 	for _, v := range dirEntry {
-		Candles = ReadCSV(v.Name(), figi)
+		Candles = readCSV(v.Name(), figi)
 	}
 
-	WriteCSV(Candles)
+	writeCSV(Candles)
 
 }
 
-func ReadCSV(filename string, figi string) []Candle {
+func readCSV(filename string, figi string) []Candle {
 	file, err := os.Open(figi + "/" + filename)
 	if err != nil {
 		log.Fatalf("Error when opening file: %s", err)
 	}
 	defer file.Close()
 	csvReader := csv.NewReader(file)
+	//csvReader.FieldsPerRecord = 7
 	csvReader.Comma = ';'
 
 	// in real application this should be done once in init function.
@@ -71,6 +60,7 @@ func ReadCSV(filename string, figi string) []Candle {
 	}
 
 	dec, err := csvutil.NewDecoder(csvReader, userHeader...)
+	dec.DisallowMissingColumns = false
 	if err != nil {
 		log.Fatalln("error while csvutil.NewDecoder ", err)
 	}
@@ -89,34 +79,18 @@ func ReadCSV(filename string, figi string) []Candle {
 		}
 
 	}
-
+	oldCandle := Candles[len(Candles)-1]
 	for {
-		oldCandle := Candles[len(Candles)-1]
 		if (oldCandle.Time.Minute()+1)%30 == 0 {
 			break
 		} else {
-			////oldCandle.Time = oldCandle.Time.Add(time.Minute)
-			//oldCandle = Candle{
-			//	Name:       oldCandle.Name,
-			//	Time:       oldCandle.Time.Add(time.Minute),
-			//	OpenPrice:  oldCandle.ClosePrice,
-			//	ClosePrice: oldCandle.ClosePrice,
-			//	MaxPrice:   oldCandle.ClosePrice,
-			//	LowPrice:   oldCandle.ClosePrice,
-			//	VolumeLot:  0,
-			//}
-			////oldCandle.VolumeLot = 0
-			//Candles = append(Candles, oldCandle)
-			newInterpolateCandle(oldCandle)
+			oldCandle = newInterpolateCandle(oldCandle)
 		}
-
 	}
 
 	return Candles
 }
-func newInterpolateCandle(oldCandle Candle) {
-
-	//oldCandle.Time = oldCandle.Time.Add(time.Minute)
+func newInterpolateCandle(oldCandle Candle) Candle {
 	oldCandle = Candle{
 		Name:       oldCandle.Name,
 		Time:       oldCandle.Time.Add(time.Minute),
@@ -126,8 +100,8 @@ func newInterpolateCandle(oldCandle Candle) {
 		LowPrice:   oldCandle.ClosePrice,
 		VolumeLot:  0,
 	}
-	//oldCandle.VolumeLot = 0
 	Candles = append(Candles, oldCandle)
+	return oldCandle
 }
 func (candle Candle) interpolate() {
 	oldCandle := Candles[len(Candles)-1]
@@ -135,38 +109,13 @@ func (candle Candle) interpolate() {
 	if !(dur == time.Minute || dur >= time.Hour) {
 		var i float64
 		for i = 1; i < dur.Minutes(); i++ {
-
-			//oldCandle = Candle{
-			//	Name:       oldCandle.Name,
-			//	Time:       oldCandle.Time.Add(time.Minute),
-			//	OpenPrice:  oldCandle.ClosePrice,
-			//	ClosePrice: oldCandle.ClosePrice,
-			//	MaxPrice:   oldCandle.ClosePrice,
-			//	LowPrice:   oldCandle.ClosePrice,
-			//	VolumeLot:  0,
-			//}
-			////oldCandle.VolumeLot = 0
-			//Candles = append(Candles, oldCandle)
-			newInterpolateCandle(oldCandle)
-			oldCandle.Time = oldCandle.Time.Add(time.Minute)
+			oldCandle = newInterpolateCandle(oldCandle)
 		}
 	}
 	Candles = append(Candles, candle)
 }
 
-func CountEma(Candles []Candle, averageCoefficient float64) {
-	a := 2 / (averageCoefficient + 1)
-	for k, v := range Candles {
-		if k != 0 {
-			v.Ema10_1min = a*v.ClosePrice + (1-a)*Candles[k-1].Ema10_1min
-		} else {
-			v.Ema10_1min = v.ClosePrice
-		}
-		Candles[k] = v
-	}
-}
-
-func WriteCSV(Candles []Candle) {
+func writeCSV(Candles []Candle) {
 
 	file, err := os.Create("1.csv")
 	if err != nil {
@@ -187,7 +136,9 @@ func WriteCSV(Candles []Candle) {
 
 }
 
+// NewTimeFrame тут n целое число отбражающее таймфрейм свечей, к примеру 5 минутные, 15 минутные и т.д
 func NewTimeFrame(n int) {
+	var Candles1 []Candle
 
 	file, err := os.Create(fmt.Sprint("1_", n, ".csv"))
 	if err != nil {
@@ -200,6 +151,16 @@ func NewTimeFrame(n int) {
 	for k, v := range Candles {
 		if v.Time.Minute()%n == 0 {
 			//smax,smin,vol:=MAXLOWpriceANDVolume(Candles[k : k+n])
+			var eMas CandleEma
+			if len(Candles1) != 0 {
+				eMas = CountEma(Candles[k+n-1].ClosePrice, Candles1[len(Candles1)-1].EMAS)
+			} else {
+				eMas = CandleEma{
+					Ema_10: Candles[k+n-1].ClosePrice,
+					Ema_20: Candles[k+n-1].ClosePrice,
+					Ema_50: Candles[k+n-1].ClosePrice,
+				}
+			}
 			newCandle := Candle{
 				Name:       v.Name,
 				Time:       v.Time,
@@ -208,19 +169,26 @@ func NewTimeFrame(n int) {
 				MaxPrice:   MaxPriceCount(Candles[k : k+n]),
 				LowPrice:   LowPriceCount(Candles[k : k+n]),
 				VolumeLot:  VolumeLotCount(Candles[k : k+n]),
+				EMAS:       eMas,
 			}
-			enc := csvutil.NewEncoder(w)
-			enc.AutoHeader = false
-			if err = enc.Encode(newCandle); err != nil {
-				fmt.Println("error:", err)
-			}
+			Candles1 = append(Candles1, newCandle)
+			//enc := csvutil.NewEncoder(w)
+			//enc.AutoHeader = false
+			//if err = enc.Encode(newCandle); err != nil {
+			//	fmt.Println("error:", err)
+			//}
 		}
 	}
-	//w := csv.NewWriter(file)
-	//w.Comma = ';'
-	//if err = csvutil.NewEncoder(w).Encode(Candles); err != nil {
+	//b, err := csvutil.Marshal(Candles1)
+	//if err != nil {
 	//	fmt.Println("error:", err)
 	//}
+	//os.WriteFile(fmt.Sprint("1_", n, ".csv"), b, 0755)
+	enc := csvutil.NewEncoder(w)
+	//enc.AutoHeader = false
+	if err = enc.Encode(Candles1); err != nil {
+		fmt.Println("error:", err)
+	}
 
 	w.Flush()
 	if err = w.Error(); err != nil {
@@ -269,4 +237,20 @@ func MAXLOWpriceANDVolume(candles []Candle) (float64, float64, int64) {
 		vol += v.VolumeLot
 	}
 	return smax, smin, vol
+}
+
+func CountEma(price float64, eMas CandleEma) CandleEma {
+	aver := [3]float64{10, 20, 50}
+	for k, _ := range aver {
+		a := 2 / (aver[k] + 1)
+		switch k {
+		case 0:
+			eMas.Ema_10 = a*price + (1-a)*eMas.Ema_10
+		case 1:
+			eMas.Ema_20 = a*price + (1-a)*eMas.Ema_20
+		case 2:
+			eMas.Ema_50 = a*price + (1-a)*eMas.Ema_50
+		}
+	}
+	return eMas
 }

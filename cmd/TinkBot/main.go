@@ -9,9 +9,11 @@ import (
 )
 
 func main() {
-	//getHistoryData.Run("figi.txt")
 
+	//getHistoryData.Run("figi.txt")
 	ema.ReadWriteCSV("BBG000B9XRY4")
+	ema.NewTimeFrame(30)
+	ema.NewTimeFrame(5)
 	ema.NewTimeFrame(15)
 	//fmt.Println(ema.Candles)
 
