@@ -36,11 +36,12 @@ func RunTinkBot(id int64, user bot.User) {
 	fmt.Println(i)
 	config.Token = user.TokenSanBox
 	tinkBot := trade.NewTinkBot(id, user.ChUser)
+	defer Wg.Done()
 	for {
 		text := "Введи test или trade или sandbox или schedules, и может быть где-нибудь ты заработаешь;)"
 		View.ShowInfo(id, text, "test", "trade", "sandbox", "stream", "schedules", "exit")
 		command := <-user.ChUser
 		Controller.Controller(tinkBot, fmt.Sprint(command))
 	}
-	Wg.Done()
+	//Wg.Done()
 }

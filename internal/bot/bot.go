@@ -43,29 +43,5 @@ func Bot() *Xrr {
 	// Loop through each update.
 	//getUpdates(updates, bot, c)
 
-	//xrr.GetUp()
-
-	//View.ChXrr <- *xrr
-	//View.Wg.Wait()
 	return xrr
 }
-
-//func (x Xrr) GetUp() {
-//	go func() {
-//		for {
-//			text := <-View.Ch
-//			if msg, test := text.(tgbotapi.MessageConfig); test {
-//				if _, err := x.BOT.Send(msg); err != nil {
-//					log.Println(err)
-//				}
-//			} else {
-//				fmt.Println("it's not tgbotapi.MessageConfig")
-//			}
-//		}
-//	}()
-//
-//	for update := range x.Updates {
-//		caseIncomingMessage(update, x.BOT, x.C)
-//		callbackQueryCase(update, x.BOT, x.C)
-//	}
-//}

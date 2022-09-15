@@ -10,7 +10,7 @@ import (
 
 func main() {
 
-	//getHistoryData.Run("figi.txt")
+	//getHistoryData.Run("figi.txt", config.Token)
 	ema.ReadWriteCSV("BBG000B9XRY4")
 	ema.NewTimeFrame(30)
 	ema.NewTimeFrame(5)
@@ -28,7 +28,6 @@ func main() {
 				case update.Message != nil:
 					if update.Message.Command() == "start" && !xrr.C.Users[update.SentFrom().ID].WorkerOn {
 						work.Worker(xrr, update.SentFrom().ID)
-						//fmt.Println(xrr.C.Users[update.SentFrom().ID].WorkerOn)
 					}
 					//xrr.C.Users[update.SentFrom().ID].ChUser <- update.Message.Text
 				case update.CallbackQuery != nil:
