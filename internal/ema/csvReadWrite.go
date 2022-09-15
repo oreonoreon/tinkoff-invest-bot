@@ -19,15 +19,17 @@ type Candle struct {
 	LowPrice   float64
 	VolumeLot  int64
 
-	EMAS CandleEma `csv:",omitempty"`
+	EMAS CandleEma `csv:",inline"`
 }
 type CandleEma struct {
-	Ema_10 float64
+	Ema_10 float64 `csv:",omitempty"`
 	Ema_20 float64
 	Ema_50 float64
 	//Time   time.Time
 }
 
+//`csv:",omitempty"`
+//`csv:"-"`
 var Candles []Candle
 
 func ReadWriteCSV(figi string) {
@@ -55,18 +57,22 @@ func readCSV(filename string, figi string) []Candle {
 
 	// in real application this should be done once in init function.
 	userHeader, err := csvutil.Header(Candle{}, "csv")
+	//устал мучаться с флагами в Candle удалю поля руками в Header
+	userHeader = append(userHeader[:len(userHeader)-2], userHeader[len(userHeader):]...)
+
 	if err != nil {
 		log.Fatal("error while csvutil.Header ", err)
 	}
 
 	dec, err := csvutil.NewDecoder(csvReader, userHeader...)
-	dec.DisallowMissingColumns = false
+	//dec.DisallowMissingColumns = false
 	if err != nil {
 		log.Fatalln("error while csvutil.NewDecoder ", err)
 	}
 
 	for {
 		var candle Candle
+		//candle := Candle{CandleEma: *new(CandleEma)}
 		if err = dec.Decode(&candle); err == io.EOF {
 			break
 		} else if err != nil {
@@ -79,6 +85,7 @@ func readCSV(filename string, figi string) []Candle {
 		}
 
 	}
+
 	oldCandle := Candles[len(Candles)-1]
 	for {
 		if (oldCandle.Time.Minute()+1)%30 == 0 {
